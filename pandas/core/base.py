@@ -1181,9 +1181,10 @@ class IndexOpsMixin(object):
         # as we know that we are not going to have to yield
         # python types
         if isinstance(mapper, dict):
-            if hasattr(mapper, '__missing__'):
+            if hasattr(mapper, '__missing__') or self.dtype == 'category':
                 # If a dictionary subclass defines a default value method,
                 # convert mapper to a lookup function (GH #15999).
+                # For categ, dict lookup is faster than indexer (GH #23785)
                 dict_with_default = mapper
                 mapper = lambda x: dict_with_default[x]
             else:
